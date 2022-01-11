@@ -8,7 +8,7 @@ order by 3,4
 --Where continent is not null
 --order by 3,4
 
--- Select data that we are going to be using
+-- Selecting Data to Use
 
 Select Location, Date, Total_Cases, New_Cases, Total_Deaths, Population
 From PortfolioProject..CovidDeaths
@@ -34,6 +34,7 @@ From PortfolioProject..CovidDeaths
 order by 1,2
 
 -- Looking at Countries with Highest Infection Rate compared to Population
+-- Shows the highest infection rate of each country compared to the percent of population that has contracted COVID
 
 Select Location, Population, MAX(total_cases) as HighestInfectionCount, MAX((total_cases/population))*100 as PercentPopulationInfected
 From PortfolioProject..CovidDeaths
@@ -42,7 +43,8 @@ From PortfolioProject..CovidDeaths
 Group by Location, Population
 order by PercentPopulationInfected desc
 
--- Showing Countries with the Highest Death Count per Population
+-- Looking at Countries with the Highest Death Count per Population
+-- Shows the highest death count per country
 
 Select Location, MAX(cast(Total_Deaths as int)) as TotalDeathCount
 From PortfolioProject..CovidDeaths
@@ -51,7 +53,7 @@ Where continent is not null
 Group by Location
 order by TotalDeathCount desc
 
--- Break Down By Continent 
+-- Break Down by Continent 
 -- Showing continents with the highest death count per population
 
 Select Location, MAX(cast(Total_Deaths as int)) as TotalDeathCount
@@ -84,7 +86,6 @@ order by 1,2
 -- Looking at Total Population vs Vaccinations
 
 -- Using Covert
-
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(bigint,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.Location, dea.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/Population)*100
@@ -96,7 +97,6 @@ Where dea.continent is not null
 Order by 2,3
 
 --Using Cast
-
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(Cast(vac.new_vaccinations as bigint)) OVER (Partition by dea.Location Order by dea.Location, dea.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/Population)*100
@@ -109,8 +109,7 @@ Order by 2,3
 
 
 
---USE CTE
-
+-- Using CTE
 With PopvsVac (Continent, Location, Date, Population, New_Vaccinations, RollingPeopleVaccinated)
 as 
 (
@@ -128,8 +127,7 @@ Select *, (RollingPeopleVaccinated/Population)*100
 From PopvsVac
 
 
---TEMP TABLE
-
+--Creating a Temp Table
 DROP Table if exists #PercentPopulationVaccinated
 Create Table #PercentPopulationVaccinated
 (
@@ -140,7 +138,6 @@ Population numeric,
 New_vaccinations numeric,
 RollingPeopleVaccinated numeric
 )
-
 Insert into #PercentPopulationVaccinated
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(bigint,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.Location, dea.Date) as RollingPeopleVaccinated
