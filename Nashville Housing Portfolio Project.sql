@@ -8,6 +8,7 @@ From PortfolioProject.dbo.NashvilleHousing
 
 
 -----------------------------------------------------------------------------------------------------------------
+
 -- Standardize Date Format
 
 
@@ -23,6 +24,7 @@ SET SaleDateConverted = CONVERT(Date,SaleDate)
 
 
 -----------------------------------------------------------------------------------------------------------------
+
 -- Populate Property Address Data 
 
 Select *
@@ -47,6 +49,7 @@ Where a.PropertyAddress is null
 
 
 -----------------------------------------------------------------------------------------------------------------
+
 -- Breaking out Address into Individual Columns (Address, City, State)
 
 -- PropertyAddress
@@ -108,6 +111,7 @@ SET OwnerSplitState = PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1)
 
 
 -----------------------------------------------------------------------------------------------------------------
+
 -- Change Y and N to Yes and No in "Sold as Vacant" Field
 
 Select Distinct(SoldAsVacant), Count(SoldAsVacant)
@@ -132,6 +136,7 @@ SET SoldAsVacant = CASE When SoldAsVacant = 'Y' THEN 'Yes'
 
 
 -----------------------------------------------------------------------------------------------------------------
+
 -- Remove Duplicates
 
 WITH RowNumCTE AS(
@@ -153,6 +158,7 @@ Where row_num > 1
 
 
 -----------------------------------------------------------------------------------------------------------------
+
 -- Delete Unused Columns
 
 Select *
